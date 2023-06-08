@@ -1,40 +1,5 @@
 [
   {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "arXiv Preprint | Code\nOver the centuries, I have devoted countless hours to deciphering and translating the ancient scripts and dialects of the various peoples of Middle-earth. My goal is to gain a deeper understanding of the cultures and histories of these peoples by studying their languages. Currently, I am working on a monograph that explores the linguistic roots of the Elvish languages. Through extensive research and analysis, I hope to shed light on the connections between the different dialects of Elvish and their origins. This project has been particularly challenging, as Elvish is a complex and nuanced language, but I am determined to see it through to completion."
-  },
-  {
-    "objectID": "projects/index.html#the-history-of-the-war-of-the-ring",
-    "href": "projects/index.html#the-history-of-the-war-of-the-ring",
-    "title": "Projects",
-    "section": "The History of the War of the Ring",
-    "text": "The History of the War of the Ring\n\narXiv Preprint | Code\nI am creating a comprehensive and detailed history of the conflict that goes beyond the surface-level events. By gathering information from a variety of sources, including my own memories, written accounts, and oral histories, I hope to shed new light on this important period in Middle-earth’s history and provide valuable insights into the motivations and actions of the various players involved.\n\nView the tutorial for this template (+ download link)"
-  },
-  {
-    "objectID": "photography/index.html",
-    "href": "photography/index.html",
-    "title": "Photography",
-    "section": "",
-    "text": "As a wizard and scholar of Middle-earth, I have been studying the magic of the natural world for centuries. Through my self-portraits, I aim to capture the essence of my own being and reflect on my own journey through time. Each photograph is a reflection of my own experiences and emotions. Through my photography, I hope to offer a glimpse into my life as a scholar and adventurer, and inspire others to reflect on their own journeys through the world.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nView the tutorial for this template (+ download link)"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Evangelos Dimitriou",
-    "section": "",
-    "text": "Twitter\n  \n  \n    \n     Github\n  \n  \n    \n     LinkedIn\n  \n  \n    \n     Email"
-  },
-  {
-    "objectID": "cv/index.html",
-    "href": "cv/index.html",
-    "title": "Curriculum vitae",
-    "section": "",
-    "text": "Download current CV\n  \n\n\n  \n\n\nView the tutorial for this template (+ download link)"
-  },
-  {
     "objectID": "index.html#abstract",
     "href": "index.html#abstract",
     "title": "Generalizing Heterogeneous Treatment Effects to Target Populations with Gaussian Processes",
@@ -60,7 +25,7 @@
     "href": "index.html#simulation-study",
     "title": "Generalizing Heterogeneous Treatment Effects to Target Populations with Gaussian Processes",
     "section": "Simulation Study",
-    "text": "Simulation Study\n\nData Generating Process\nFor both datasets the treatment is generated as: \\(T \\sim Bernoulli(0.5)\\). In the RCT the observed covariate \\(X\\) is generated as \\(X_{S=1} \\sim Uniform[-1,1]\\) and the unobserved confounder as \\(U_{S=1}\\sim \\mathcal{N}(0,1)\\).\nIn the observational study the covariate \\(X\\) and the hidden confounder \\(U\\) are observed as:\n\\[\n\\left(X_{S=0},U_{S=0}\\right)|T_{S=0} \\sim \\mathcal{N}\\left([0,0],       \\begin{bmatrix}      1 & T_{S=0}-0.5\\\\      T_{S=0}-0.5 & 1      \\end{bmatrix}      \\right)\n\\]For both datasets the outcome is generated as \\(Y=1+T+X+2\\cdot T\\cdot X +0.5X^2 +0.75\\cdot T \\cdot X^2 +U +0.5\\epsilon\\).\nThe Potential Outcomes are\n\\[\nY_0(X) = 1+X+0.50X^2\n\\]\n\\[Y_1(X) = 2+3X+1.25X^2\\] and the CATE is\n\\[\n\\tau(X) = 1+2X+0.75X^2\n\\]\nThe data and the true functional form of the CATE are depisted on the figure:\n\n\n\n\n\n\n\nEstimation Methods\nIn order to estimate the CATE we trained a rank-2 ICM where each potential outcome is considered an output for the model. We also estimated the the CATE using a technique proposed by Kallus et al (2018) where the RCT is used to deconfound the CAATE estimated on the observational study. This “deconfounding”is done using a bias/confounding function, which is a function trying to capture the bias introduced on the observational data by the hidden confounders. This function is assumed to be parametric and it has the following form:\n\\[\n\\eta(\\textbf{x}) = \\tau_{RCT}(\\textbf{x}) - \\tau_{obs}(\\textbf{x})\n\\]\nand can be well approximated by a function with low complexity (e.g. linear).\n\n\nResults\nThe results of the different approaches are depicted on the following figure:\n\n\n\n\n\nTo compare the different models, we computed the Mean Square Error:\n\n\n\n\n\n\n\n\nMSE\n\n\n\n\n\\[                                    \n      \\hat{\\tau}_{Kallus}               \n      \\]\n0.569751423740531\n\n\n\\[                                    \n      \\hat{\\tau}_{obs}^{ICM}            \n      \\]\n1.175507693180824\n\n\n\\[                                    \n      \\hat{\\tau}_{RCT}^{ICM}            \n      \\]\n0.157628030012711\n\n\n\nWe notice that the CATE estimation obtained by the RCT part of the coregionalization model performs better than both the observational part of the ICM model and the method proposed by Kallus et al."
+    "text": "Simulation Study\n\nData Generating Process\nFor both datasets the treatment is generated as: \\(T \\sim Bernoulli(0.5)\\). In the RCT the observed covariate \\(X\\) is generated as \\(X_{S=1} \\sim Uniform[-1,1]\\) and the unobserved confounder as \\(U_{S=1}\\sim \\mathcal{N}(0,1)\\).\nIn the observational study the covariate \\(X\\) and the hidden confounder \\(U\\) are observed as:\n\\[\n\\left(X_{S=0},U_{S=0}\\right)|T_{S=0} \\sim \\mathcal{N}\\left([0,0],       \\begin{bmatrix}      1 & T_{S=0}-0.5\\\\      T_{S=0}-0.5 & 1      \\end{bmatrix}      \\right)\n\\]For both datasets the outcome is generated as \\(Y=1+T+X+2\\cdot T\\cdot X +0.5X^2 +0.75\\cdot T \\cdot X^2 +U +0.5\\epsilon\\).\nThe Potential Outcomes are\n\\[\nY_0(X) = 1+X+0.50X^2\n\\]\n\\[Y_1(X) = 2+3X+1.25X^2\\] and the CATE is\n\\[\n\\tau(X) = 1+2X+0.75X^2\n\\]\nThe data and the true functional form of the CATE are depisted on the figure:\n\n\n\n\n\n\n\nEstimation Methods\nIn order to estimate the CATE we trained a rank-2 ICM where each potential outcome is considered an output for the model. We also estimated the the CATE using a technique proposed by Kallus et al (2018) where the RCT is used to deconfound the CAATE estimated on the observational study. This “deconfounding”is done using a bias/confounding function, which is a function trying to capture the bias introduced on the observational data by the hidden confounders. This function is assumed to be parametric and it has the following form:\n\\[\n\\eta(\\textbf{x}) = \\tau_{RCT}(\\textbf{x}) - \\tau_{obs}(\\textbf{x})\n\\]\nand can be well approximated by a function with low complexity (e.g. linear).\n\n\nResults\nThe results of the different approaches are depicted on the following figure:\n\n\n\n\n\nTo compare the different models, we computed the Mean Square Error:\n\n\n\n\n\n\n\n\nMSE\n\n\n\n\n\\[                                          \n        \\hat{\\tau}_{Kallus}                   \n        \\]\n0.569751423740531\n\n\n\\[                                          \n        \\hat{\\tau}_{obs}^{ICM}                \n        \\]\n1.175507693180824\n\n\n\\[                                          \n        \\hat{\\tau}_{RCT}^{ICM}                \n        \\]\n0.157628030012711\n\n\n\nWe notice that the CATE estimation obtained by the RCT part of the coregionalization model performs better than both the observational part of the ICM model and the method proposed by Kallus et al."
   },
   {
     "objectID": "index.html#conclusion",

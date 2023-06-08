@@ -466,17 +466,17 @@ The results of the different approaches are depicted on the following figure:
 
 To compare the different models, we computed the Mean Square Error:
 
-|                                       |        MSE        |
-|---------------------------------------|:-----------------:|
-| $$                                    
-      \hat{\tau}_{Kallus}               
-      $$                                | 0.569751423740531 |
-| $$                                    
-      \hat{\tau}_{obs}^{ICM}            
-      $$                                | 1.175507693180824 |
-| $$                                    
-      \hat{\tau}_{RCT}^{ICM}            
-      $$                                | 0.157628030012711 |
+|                                          |        MSE        |
+|------------------------------------------|:-----------------:|
+| $$                                       
+       \hat{\tau}_{Kallus}                 
+       $$                                  | 0.569751423740531 |
+| $$                                       
+       \hat{\tau}_{obs}^{ICM}              
+       $$                                  | 1.175507693180824 |
+| $$                                       
+       \hat{\tau}_{RCT}^{ICM}              
+       $$                                  | 0.157628030012711 |
 
 We notice that the CATE estimation obtained by the RCT part of the coregionalization model performs better than both the observational part of the ICM model and the method proposed by Kallus et al.
 

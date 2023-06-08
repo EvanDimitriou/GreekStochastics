@@ -46,17 +46,17 @@ We follow the Potential Outcomes framework (*Rubins, 1974*), where each individu
 Our goal is to estimate the Conditional Average Treatment Effect (CATE), which is defined as following:
 
 $$
-\tau(\textbf{x}) = \mathbb{E}[Y(1)-Y(0):\textbf{X} = \textbf{x}]
+\tau(\textbf{x}) = \mathbb{E}[Y(1)-Y(0)|\textbf{X} = \textbf{x}]
 $$
 
 which we can make even more specific if we take into account the data source, i.e. the RCT and the observational study:
 
 $$
-\tau_0(\textbf{x}) = \mathbb{E}[Y(1)-Y(0):\textbf{X} = \textbf{x}, S=0]
+\tau_0(\textbf{x}) = \mathbb{E}[Y(1)-Y(0)|\textbf{X} = \textbf{x}, S=0]
 $$
 
 $$
-\tau_1(\textbf{x}) = \mathbb{E}[Y(1)-Y(0):\textbf{X} = \textbf{x}, S=1]
+\tau_1(\textbf{x}) = \mathbb{E}[Y(1)-Y(0)|\textbf{X} = \textbf{x}, S=1]
 $$
 
 A fundamental problem is that we don't get to observe the potential outcomes $Y(\alpha)$, but we only get to observe the factual outcomes under the treatment the individual was assigned to. In order to be able to identify the Conditional Average Treatment Effect from the RCT and the observational study we need to make some assumptions.

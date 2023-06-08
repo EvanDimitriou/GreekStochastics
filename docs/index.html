@@ -155,8 +155,7 @@ div.csl-indent {
 
 <section id="abstract" class="level2">
 <h2 data-anchor-id="abstract">Abstract</h2>
-<p><strong>Background:</strong> The unconfoundedness of the Randomised Control Trials leads to high internal validity, but due to their small sample sizes they are not representative of the target population. The large sample sizes of the observational studies lead to representativeness, but they lack internal validity due to confounding. Gaussian Processes for multi-task learning was mainly developed and used in the context of geostatistics. The Linear Model of Coregionalization can be viewed as a generative approach for constructing valid covariance functions formulated as a sum of separable kernels. Under this modeling approach the outcomes are expressed as linear combinations of independent random functions, allowing them to be correlated and share information.</p>
-<p><strong>Objectives:</strong> We use multi-output Gaussian Processes to estimate heterogeneous treatment effects when combining experimental and observational studies.</p>
+<p>Randomised control trials (RCT) are widely considered the gold standard for making causal predictions and assessing treatment effects, due to their high internal validity that comes with randomisation. However, the strict eligibility criteria often lead to small samples not representative of the target population and as a result to lack of external validity. In contrast, observational studies, which often have larger sample sizes, are representative of the target population, but lack internal validity due to confounding leading to biased results. Most of the methods for combining observational and experimental studies and estimating causal effects come from the frequentist framework - such as weighting, outcome modelling or doubly robust estimators - although some work has been done recently in the Bayesian context. To obtain unbiased estimates of heterogeneous treatment effects for the target population represented by the observational study, we propose a Bayesian non-parametric approach based on Gaussian Processes, where the RCT data are used to correct the confounding effect on the observational data. Our method does not require full covariate overlap between the RCT and the observational samples and yields a quantification of the uncertainty. We demonstrate our method’s performance through a simulation study.</p>
 </section>
 <section id="problem-setting-and-notation" class="level2">
 <h2 data-anchor-id="problem-setting-and-notation">Problem Setting and Notation</h2>
@@ -224,18 +223,20 @@ div.csl-indent {
 <p><img src="images/DAG2.png" class="img-fluid figure-img" width="450"></p>
 </figure>
 </div>
+<p>In the RCT there is no arrow connecting the hidden confounder <span class="math inline">\(U\)</span> with the treatment <span class="math inline">\(A\)</span> nor an arrow connecting the baseline covariates <span class="math inline">\(X\)</span> with the treatment <span class="math inline">\(A\)</span>, implying that there is no confounding in the RCT.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/DAG3.png" class="img-fluid figure-img" width="450"></p>
 </figure>
 </div>
+<p>On the contrary, in the observational study we see that there is an arrow connecting the unobserved confounder <span class="math inline">\(U\)</span> both with the treatment <span class="math inline">\(A\)</span> and the outcome <span class="math inline">\(Y\)</span> implying that the dataset is confounded. The same also holds for the baseline covariates <span class="math inline">\(X\)</span>.</p>
 </section>
 </section>
 <section id="intrinsic-coregionalization-model" class="level2">
 <h2 data-anchor-id="intrinsic-coregionalization-model">Intrinsic Coregionalization Model</h2>
 <section id="introduction" class="level3">
 <h3 data-anchor-id="introduction">Introduction</h3>
-<p>Formally, the classical supervised learning problem requires estimating the output for any given input <span class="math inline">\(\textbf{x}_*\)</span>; an estimator <span class="math inline">\(f_*(\textbf{x}_*)\)</span> is built on the basis of a training set consisting of <span class="math inline">\(N\)</span> input-output pairs <span class="math inline">\(S=\left(\textbf{X}, \textbf{Y}\right) = \{(\textbf{x}_1,y_1),\cdots,(\textbf{x}_N,y_N)\}\)</span>. The input space <span class="math inline">\(\mathcal{X}\)</span> is usually a space of vectors, while the output space is a space of scalars. In multiple output learning (MOL) the output space is a space of vectors as well; the estimator is now a vector valued function <span class="math inline">\(\textbf{f}\)</span>. Indeed, this situation can also be described as the problem of solving <span class="math inline">\(D\)</span> distinct classical supervised learning problems, where each problem is described by one of the components <span class="math inline">\(f_1,\cdots,f_D\)</span> of <span class="math inline">\(\textbf{f}\)</span>. The key idea is to work under the assumption that the problems are in some way related. The goal is then to exploit the relationship among the problems to improve upon solving each problem separately.</p>
+<p>Formally, the classical supervised learning problem requires estimating the output for any given input <span class="math inline">\(\textbf{x}_*\)</span>; an estimator <span class="math inline">\(f_*(\textbf{x}_*)\)</span> is built on the basis of a training set consisting of <span class="math inline">\(N\)</span> input-output pairs <span class="math inline">\(S=\left(\textbf{X}, \textbf{Y}\right) = \{(\textbf{x}_1,y_1),\cdots,(\textbf{x}_N,y_N)\}\)</span>. The input space <span class="math inline">\(\mathcal{X}\)</span> is usually a space of vectors, while the output space is a space of scalars. By extending the scalar output learning to the multiple output learning (MOL) we have that the output space is a space of vectors as well; the estimator is now a vector valued function <span class="math inline">\(\textbf{f}\)</span>. Indeed, this situation can also be described as the problem of solving <span class="math inline">\(D\)</span> distinct classical supervised learning problems, where each problem is described by one of the components <span class="math inline">\(f_1,\cdots,f_D\)</span> of <span class="math inline">\(\textbf{f}\)</span>. The key idea is to work under the assumption that the problems are in some way related. The goal is then to exploit the relationship among the problems to improve upon solving each problem separately.</p>
 </section>
 <section id="gaussian-processes-for-vector-valued-functions" class="level3">
 <h3 data-anchor-id="gaussian-processes-for-vector-valued-functions">Gaussian Processes for Vector Valued Functions</h3>
@@ -246,7 +247,7 @@ div.csl-indent {
 \textbf{f} \sim \mathcal{GP}\left(\textbf{m},\textbf{K}\right)
 \end{equation}
 \]</span></p>
-<p>where <span class="math inline">\(\textbf{m}\in \mathbb{R}^D\)</span> is a vector the components of which are the mean functions <span class="math inline">\(\{m_d(\textbf{x})\}_{d=1}^D\)</span> of each components and <span class="math inline">\(\textbf{K}\)</span> is a positive matrix valued function with dimension <span class="math inline">\(ND \times ND\)</span> and with entries <span class="math inline">\(\left(\textbf{K}(\textbf{x}_i, \textbf{x}j) \right){d,d'}\)</span> dor <span class="math inline">\(i,j=1,\cdots,N\)</span> and for <span class="math inline">\(d,d'=1,\cdots,D\)</span>. More explicitly,</p>
+<p>where <span class="math inline">\(\textbf{m}\in \mathbb{R}^D\)</span> is a vector the components of which are the mean functions <span class="math inline">\(\{m_d(\textbf{x})\}_{d=1}^D\)</span> of each output and <span class="math inline">\(\textbf{K}\)</span> is a positive matrix valued function with dimension <span class="math inline">\(ND \times ND\)</span> and with entries <span class="math inline">\(\left(\textbf{K}(\textbf{x}_i, \textbf{x}_j) \right)_{d,d'}\)</span> for <span class="math inline">\(i,j=1,\cdots,N\)</span> and for <span class="math inline">\(d,d'=1,\cdots,D\)</span>. More explicitly,</p>
 <p><span class="math display">\[
 \textbf{K}(\textbf{X},\textbf{X})=
 \begin{bmatrix}
@@ -264,7 +265,7 @@ div.csl-indent {
 \end{equation}
 \]</span></p>
 <p>where <span class="math inline">\(\textbf{m}(\textbf{X})\)</span> is a vector that concentrates the mean vectors associated to the outputs and the covariance matrix <span class="math inline">\(\textbf{K}(\textbf{X}, \textbf{X})\)</span> is the one described in above.</p>
-<p>In a regression context, the likelihood function for the outputs is often taken to be Gaussian distribution, so that</p>
+<p>In a regression context, the likelihood function for the outputs is often taken to be a Gaussian distribution, so that</p>
 <p><span class="math display">\[
 p(\textbf{y}|\textbf{f}, \textbf{x}, \Sigma) = \mathcal{N}(\textbf{f}(\textbf{x}), \Sigma)
 \]</span></p>
@@ -286,12 +287,12 @@ p\left(\textbf{f}(\textbf{x}_*)|\textbf{S},\textbf{f}, \textbf{x}, \phi\right) =
 <h3 data-anchor-id="separable-kernels-and-sum-of-separable-kernels">Separable Kernels and Sum of Separable Kernels</h3>
 <p>Multi-output class of kernel functions that are formulated as a sum of products between a kernel function for the input space alone and a kernel function that encodes the interactions among the outputs are called separable kernels and sum of separable kernels.</p>
 <p>We consider the class of kernels of the form</p>
-<p><span class="math display">\[\left(\textbf{K}(\textbf{x},\textbf{x}')\right)_{d,d'} = k(\textbf{x},\textbf{x}')k_T(d,d')\]</span> where <span class="math inline">\(k\)</span>,<span class="math inline">\(k_T\)</span> are scalar kernels on <span class="math inline">\(\mathcal{X}\times \mathcal{X}\)</span> and <span class="math inline">\(\{1,\cdots,D\} \times \{1,\cdots,D\}\)</span>.</p>
+<p><span class="math display">\[\left(\textbf{K}(\textbf{x},\textbf{x}')\right)_{d,d'} = k(\textbf{x},\textbf{x}')k_T(d,d')\]</span> where <span class="math inline">\(k\)</span>,<span class="math inline">\(k_T\)</span> are scalar kernels on <span class="math inline">\(\mathcal{X}\times \mathcal{X}\)</span> and <span class="math inline">\(\{1,\cdots,D\} \times \{1,\cdots,D\}\)</span> respectively.</p>
 <p>Equivalently, one can consider the matrix expression</p>
 <p><span class="math display">\[
-\textbf{K}(\textbf{x},\textbf{x}')=k(\textbf{x},\textbf{x}')\textbf{B}
+\textbf{K}(\textbf{x},\textbf{x}')=\textbf{B} k(\textbf{x},\textbf{x}')
 \]</span></p>
-<p>where <span class="math inline">\(\textbf{B}\)</span> is a <span class="math inline">\(D\times D\)</span> symmetric and positive semi-definite matrix. We call this class of kernels separable since the contribution of input and output is decoupled.</p>
+<p>where <span class="math inline">\(\textbf{B}\)</span> is a <span class="math inline">\(D\times D\)</span> symmetric and positive semi-definite matrix. We call this class of kernels <strong>separable</strong> since the contribution of input and output is decoupled.</p>
 <p>In the same spirit a more general class of kernels is given by</p>
 <p><span class="math display">\[
 \textbf{K}(\textbf{x},\textbf{x}') = \sum_{q=1}^Q k_q(\textbf{x},\textbf{x}')\textbf{B}_q
@@ -300,11 +301,11 @@ p\left(\textbf{f}(\textbf{x}_*)|\textbf{S},\textbf{f}, \textbf{x}, \phi\right) =
 <p><span class="math display">\[
 \textbf{K}(\textbf{X},\textbf{X}) = \sum_{q=1}^Q \textbf{B}_q \otimes k_q(\textbf{X},\textbf{X})
 \]</span></p>
-<p>where <span class="math inline">\(\otimes\)</span> represent the Kronecker product between matrices. We call this class of kernels sum of separable kernels.</p>
+<p>where <span class="math inline">\(\otimes\)</span> represent the Kronecker product between matrices. We call this class of kernels <strong>sum of separable kernels</strong>.</p>
 </section>
 <section id="rank-2-icm" class="level3">
 <h3 data-anchor-id="rank-2-icm">Rank-2 ICM</h3>
-<p>We want to combine these two data sets to obtain an unbiased estimate of the CATE on the observational study.</p>
+<p>We want to combine and observational study and a RCT to obtain an unbiased estimate of the CATE on the observational study (which is representative of the target population).</p>
 <p>In order to estimate the study specific CATEs we need to estimate four different quantities:</p>
 <p><span class="math display">\[
 \mathbb{E}[Y|X=x, T=0, S=0]
@@ -318,7 +319,9 @@ p\left(\textbf{f}(\textbf{x}_*)|\textbf{S},\textbf{f}, \textbf{x}, \phi\right) =
 <p><span class="math display">\[
 \mathbb{E}[Y|X=x, T=1, S=1]
 \]</span></p>
-<p>In the ICM, the outputs are expressed as linear combinations of independent random functions and in our particular case as the weighted sum of two latent functions, described with the same kernel.</p>
+<p>Under the identifiability conditions, these quantities represent the potential outcomes on each study.</p>
+<p>In the ICM, the outputs are expressed as linear combinations of independent random functions and in our particular case as the weighted sum of two latent functions, described with the same kernel (rank-2 model).</p>
+<p><u>The parameterization is the following:</u></p>
 <p>We assume that each output is associated with a potential outcome and we construct the model in the following way:</p>
 <ol type="1">
 <li><p>We sample from a GP <span class="math inline">\(u(\textbf{x})\sim\left(\textbf{0}, k(\textbf{x},\textbf{x}')\right)\)</span> twice to obtain <span class="math inline">\(u^1(\textbf{x})\)</span> and <span class="math inline">\(u^2(\textbf{x})\)</span>.</p></li>
@@ -347,17 +350,21 @@ f_0^{obs}(\textbf{x})\\
 f_1^{obs}(\textbf{x})
 \end{bmatrix}
 \]</span></p>
-<p>The covariance for <span class="math inline">\(\textbf{f}(\textbf{x})\)</span> is given in terms of the covariance functions for <span class="math inline">\(u_q^i(\textbf{x})\)</span>, <span class="math inline">\(i=1,2\)</span> and <span class="math inline">\(q=1,2,3,4\)</span></p>
+<p>If we define <span class="math inline">\(\alpha^1 = [\alpha_1^1, \alpha_2^1, \alpha_3^1, \alpha_4^1]\)</span> and <span class="math inline">\(\alpha^2 = [\alpha_1^2, \alpha_2^2, \alpha_3^2, \alpha_4^2]\)</span> then the covariance for <span class="math inline">\(\textbf{f}(\textbf{x})\)</span> is given in terms of the covariance functions for <span class="math inline">\(u_q^i(\textbf{x})\)</span>, <span class="math inline">\(i=1,2\)</span> and <span class="math inline">\(q=1,2,3,4\)</span></p>
 <p><span class="math display">\[
-\begin{bmatrix}
+\begin{multline}
+\left(\alpha^1\left(\alpha^1\right)^\top +\alpha^2\left(\alpha^2\right)^\top\right)\otimes k(\textbf{x}, \textbf{x}')=\\
+=\begin{bmatrix}
 (\alpha_1^1)^2+(\alpha_1^2)^2 &amp; \alpha_1^1\alpha_2^1+\alpha_1^2\alpha_2^2 &amp; \alpha_1^1\alpha_3^1+\alpha_1^2\alpha_3^2 &amp; \alpha_1^1\alpha_4^1+\alpha_1^2\alpha_4^2\\
 \alpha_2^1\alpha_1^1+\alpha_2^2\alpha_1^2 &amp; (\alpha_2^1)^2+(\alpha_2^2)^2 &amp; \alpha_2^1\alpha_3^1+\alpha_2^2\alpha_3^2 &amp; \alpha_2^1\alpha_4^1+\alpha_2^2\alpha_4^2 \\
 \alpha_3^1\alpha_1^1+\alpha_3^2\alpha_1^2 &amp; \alpha_3^1\alpha_2^1+\alpha_3^2\alpha_2^2 &amp; (\alpha_3^1)^2+(\alpha_3^2)^2 &amp; \alpha_3^1\alpha_4^1+\alpha_3^2\alpha_4^2 \\
 \alpha_4^1\alpha_1^1+\alpha_4^2\alpha_1^2 &amp; \alpha_4^1\alpha_2^1+\alpha_4^2\alpha_2^2 &amp; \alpha_4^1\alpha_3^1+\alpha_4^2\alpha_3^2 &amp; (\alpha_4^1)^2+(\alpha_4^2)^2
-\end{bmatrix}\otimes k(\textbf{x},\textbf{x}') = \textbf{B}\otimes k(\textbf{x},\textbf{x}')
+\end{bmatrix}\otimes k(\textbf{x},\textbf{x}') = \\
+=\textbf{B}\otimes k(\textbf{x},\textbf{x}')
+\end{multline}
 \]</span></p>
-<p>The rank of the matrix <span class="math inline">\(\textbf{B}\)</span> is equal to the number of independent latent functions we use to describe the outcomes, i.e.&nbsp;equal to 2.</p>
-<p>Following this parameterisation, we can obtain the CATE of each dataset by simply taking their difference of the potential outcomes, i.e.</p>
+<p>The rank of the matrix <span class="math inline">\(\textbf{B}\)</span> is equal to the number of independent latent functions <span class="math inline">\(u\)</span> we use to describe the outcomes, i.e.&nbsp;equal to 2.</p>
+<p>Following this parameterisation, we can obtain the CATE of each dataset by simply taking the difference of the potential outcomes, i.e.</p>
 <p><span class="math display">\[
 \tau_{RCT}(\textbf{x}) = f_1^{RCT}(\textbf{x}) - f_0^{RCT}(\textbf{x})
 \]</span></p>
@@ -373,7 +380,7 @@ f_1^{obs}(\textbf{x})
 </section>
 <section id="uncertainty" class="level3">
 <h3 data-anchor-id="uncertainty">Uncertainty</h3>
-<p>Apart from estimation the Conditional Average Treatment Effect, we also need to to estimate the uncertainty of our prediction.</p>
+<p>Apart from estimating the Conditional Average Treatment Effect, we also need to to estimate the uncertainty of our prediction on the prediction inputs <span class="math inline">\(\textbf{X}^*\)</span>.</p>
 <p>For a set of inputs <span class="math inline">\(\textbf{X}\)</span>, the prior distribution over the vector <span class="math inline">\(\textbf{f}(\textbf{X})\)</span> is given by:</p>
 <p><span class="math display">\[
 \textbf{f} =
@@ -456,7 +463,8 @@ var(\tau_1) = V^{22}+V^{11}-2V^{12} \in \mathbb{R}^{N_* \times N_*}
 </section>
 <section id="simulation-study" class="level2">
 <h2 data-anchor-id="simulation-study">Simulation Study</h2>
-<p>Data Generating Process</p>
+<section id="data-generating-process" class="level3">
+<h3 data-anchor-id="data-generating-process">Data Generating Process</h3>
 <p>For both datasets the treatment is generated as: <span class="math inline">\(T \sim Bernoulli(0.5)\)</span>. In the RCT the observed covariate <span class="math inline">\(X\)</span> is generated as <span class="math inline">\(X_{S=1} \sim Uniform[-1,1]\)</span> and the unobserved confounder as <span class="math inline">\(U_{S=1}\sim \mathcal{N}(0,1)\)</span>.</p>
 <p>In the observational study the covariate <span class="math inline">\(X\)</span> and the hidden confounder <span class="math inline">\(U\)</span> are observed as:</p>
 <p><span class="math display">\[
@@ -476,11 +484,17 @@ Y_0(X) = 1+X+0.50X^2
 <p><img src="images/data.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-<p>In order to estimate the CATE we trained a rank 2 ICM where each potential outcome is considered an output for the model. We also estimated the the CATE using a technique proposed by Kallus et al (2018) where the RCT is used to deconfound the CAATE estimated on the observational study. This “deconfoundig”is done using a bias/confounding function, which is a function trying to capture the bias introduced on the observational data by the hidden confounders. This function has the form:</p>
+</section>
+<section id="estimation-methods" class="level3">
+<h3 data-anchor-id="estimation-methods">Estimation Methods</h3>
+<p>In order to estimate the CATE we trained a rank-2 ICM where each potential outcome is considered an output for the model. We also estimated the the CATE using a technique proposed by Kallus et al (2018) where the RCT is used to deconfound the CAATE estimated on the observational study. This “deconfounding”is done using a bias/confounding function, which is a function trying to capture the bias introduced on the observational data by the hidden confounders. This function is assumed to be parametric and it has the following form:</p>
 <p><span class="math display">\[
 \eta(\textbf{x}) = \tau_{RCT}(\textbf{x}) - \tau_{obs}(\textbf{x})
 \]</span></p>
 <p>and can be well approximated by a function with low complexity (e.g.&nbsp;linear).</p>
+</section>
+<section id="results" class="level3">
+<h3 data-anchor-id="results">Results</h3>
 <p>The results of the different approaches are depicted on the following figure:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -490,8 +504,8 @@ Y_0(X) = 1+X+0.50X^2
 <p>To compare the different models, we computed the Mean Square Error:</p>
 <table class="table">
 <colgroup>
-<col style="width: 63%">
-<col style="width: 36%">
+<col style="width: 65%">
+<col style="width: 34%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -501,38 +515,43 @@ Y_0(X) = 1+X+0.50X^2
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="math display">\[                              
-    \hat{\tau}_{Kallus}           
-    \]</span></td>
+<td><span class="math display">\[                                 
+     \hat{\tau}_{Kallus}             
+     \]</span></td>
 <td style="text-align: center;">0.569751423740531</td>
 </tr>
 <tr class="even">
-<td><span class="math display">\[                              
-    \hat{\tau}_{obs}^{ICM}        
-    \]</span></td>
+<td><span class="math display">\[                                 
+     \hat{\tau}_{obs}^{ICM}          
+     \]</span></td>
 <td style="text-align: center;">1.175507693180824</td>
 </tr>
 <tr class="odd">
-<td><span class="math display">\[                              
-    \hat{\tau}_{RCT}^{ICM}        
-    \]</span></td>
+<td><span class="math display">\[                                 
+     \hat{\tau}_{RCT}^{ICM}          
+     \]</span></td>
 <td style="text-align: center;">0.157628030012711</td>
 </tr>
 </tbody>
 </table>
 <p>We notice that the CATE estimation obtained by the RCT part of the coregionalization model performs better than both the observational part of the ICM model and the method proposed by Kallus et al.</p>
 </section>
+</section>
 <section id="conclusion" class="level2">
 <h2 data-anchor-id="conclusion">Conclusion</h2>
 <ul>
-<li><p>Multi-output GPs are proven to be effective in estimating heterogeneous treatment effects when combining observational and experimental studies.</p></li>
+<li><p>Multi-output GPs appear to be effective in estimating heterogeneous treatment effects under the presence of hidden confounding when combining observational and experimental studies.</p></li>
 <li><p>The ICM does not require full covariate overlap between the different studies.</p></li>
+<li><p>Each potential outcome is considered to be a separate output of the multi-output model.</p></li>
 <li><p>The CATE estimate using the ICM experimental part yielded the lowest MSE, over-performing state of the art methods.</p></li>
 </ul>
 </section>
 <section id="discussionfuture-work" class="level2">
 <h2 data-anchor-id="discussionfuture-work">Discussion/Future Work</h2>
-<p>The credible intervals obtained by the ICM are very narrow, proving that the ICM is over-confident when predicting the CATE.</p>
+<p>The following points are still under investigation:</p>
+<ol type="1">
+<li>When using the ICM to obtain an estimate of the CATE we can also compute the uncertainty analytically. The credible intervals obtained by the ICM however seem to be very narrow - especially on the RCT support- not covering the true CATE and proving that the ICM is over-confident when predicting the CATE.</li>
+</ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/CI2.png" class="img-fluid figure-img"></p>
@@ -543,13 +562,17 @@ Y_0(X) = 1+X+0.50X^2
 <p><img src="images/CIzoom.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-<p>Moreover, the model treats the different sources of data as equal, i.e.&nbsp;datapoints from the RCT are considered exactly equivalent as datapoint coming from the observational study. However, it would be worth it to investigate the result of the estimation if we would assign different weight to individuals coming from different studies.</p>
+<ol start="2" type="1">
+<li>Moreover, the model treats the different sources of data as equal, i.e.&nbsp;datapoints from the RCT are considered exactly equivalent to datapoints coming from the observational study. However, the RCT is considered unbiased/unconfounded and it would be a wise approach to consider those subjects as more important, i.e.&nbsp;to consider the RCT as a more valuable source of information and as a result assign higher weights to the individuals coming from the RCT.</li>
+</ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/weight.png" class="img-fluid figure-img" width="406"></p>
 </figure>
 </div>
-<p>Last, the ICM trained to estimate the CATE in the simulation study was defined using the RBF kernel for the independent latent functions. However, we should investigate if the choice of another kernel would yield better results.</p>
+<ol start="3" type="1">
+<li>Last, the ICM trained to estimate the CATE in the simulation study was defined using the RBF kernel for the independent latent functions. However, the choice of another kernel might yield better results.</li>
+</ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/kernels.png" class="img-fluid figure-img" width="304"></p>

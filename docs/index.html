@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Evangelos Dimitriou">
+<meta name="author" content="Karla Diaz-Ordaz">
+<meta name="author" content="Gareth Ambler">
+<meta name="author" content="Edwin Fong">
+<meta name="author" content="Brieuc Lehmann">
+
+<title>Generalizing Heterogeneous Treatment Effects to Target Populations with Gaussian Processes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<div class="quarto-about-jolla">
+ <header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Generalizing Heterogeneous Treatment Effects to Target Populations with Gaussian Processes</h1>
+</div>
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Authors</div>
+  <div class="quarto-title-meta-heading">Affiliations</div>
+    <div class="quarto-title-meta-contents">
+    Evangelos Dimitriou 
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Department of Statistical Science, UCL
+          </p>
+      </div>
+      <div class="quarto-title-meta-contents">
+    Karla Diaz-Ordaz 
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Department of Statistical Science, UCL
+          </p>
+      </div>
+      <div class="quarto-title-meta-contents">
+    Gareth Ambler 
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Department of Statistical Science, UCL
+          </p>
+      </div>
+      <div class="quarto-title-meta-contents">
+    Edwin Fong 
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Novo Nordisk
+          </p>
+      </div>
+      <div class="quarto-title-meta-contents">
+    Brieuc Lehmann 
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Department of Statistical Science, UCL
+          </p>
+      </div>
+    </div>
+<div class="quarto-title-meta">
+  </div>
+</header><div id="about-block">
+</div>  
+</div>
+
+<section id="abstract" class="level2">
+<h2 data-anchor-id="abstract">Abstract</h2>
+<p><strong>Background:</strong> The unconfoundedness of the Randomised Control Trials leads to high internal validity, but due to their small sample sizes they are not representative of the target population. The large sample sizes of the observational studies lead to representativeness, but they lack internal validity due to confounding. Gaussian Processes for multi-task learning was mainly developed and used in the context of geostatistics. The Linear Model of Coregionalization can be viewed as a generative approach for constructing valid covariance functions formulated as a sum of separable kernels. Under this modeling approach the outcomes are expressed as linear combinations of independent random functions, allowing them to be correlated and share information.</p>
+<p><strong>Objectives:</strong> We use multi-output Gaussian Processes to estimate heterogeneous treatment effects when combining experimental and observational studies.</p>
+</section>
+<section id="problem-setting-and-notation" class="level2">
+<h2 data-anchor-id="problem-setting-and-notation">Problem Setting and Notation</h2>
+<p>We follow the Potential Outcomes framework (<em>Rubins, 1974</em>), where each individual is represented by a random tupple <span class="math inline">\(\left(\textbf{X}, Y(0), Y(1), A, S\right)\)</span> with distribution <span class="math inline">\(P\)</span>, where</p>
+<ul>
+<li><p><span class="math inline">\(\textbf{X}\)</span> is a <span class="math inline">\(p\)</span>-dimensional vector of covariates (including confounders, effect modifiers).</p></li>
+<li><p><span class="math inline">\(A\)</span>: a binary treatment, with <span class="math inline">\(A=1\)</span> for the treated and <span class="math inline">\(A=0\)</span> for the control individuals.</p></li>
+<li><p><span class="math inline">\(Y(\alpha)\)</span>: the outcome had the individual been assigned to treatment <span class="math inline">\(\alpha\)</span>, for <span class="math inline">\(\alpha \in \{0,1\}\)</span>.</p></li>
+<li><p><span class="math inline">\(S\)</span>: a binary study indicator, with <span class="math inline">\(S=1\)</span> indicating the RCT and <span class="math inline">\(S=0\)</span> indicating the observational study.</p></li>
+</ul>
+<p>Our goal is to estimate the Conditional Average Treatment Effect (CATE), which is defined as following:</p>
+<p><span class="math display">\[
+\tau(\textbf{x}) = \mathbb{E}[Y(1)-Y(0):\textbf{X} = \textbf{x}]
+\]</span></p>
+<p>which we can make even more specific if we take into account the data source, i.e.&nbsp;the RCT and the observational study:</p>
+<p><span class="math display">\[
+\tau_0(\textbf{x}) = \mathbb{E}[Y(1)-Y(0):\textbf{X} = \textbf{x}, S=0]
+\]</span></p>
+<p><span class="math display">\[
+\tau_1(\textbf{x}) = \mathbb{E}[Y(1)-Y(0):\textbf{X} = \textbf{x}, S=1]
+\]</span></p>
+<p>A fundamental problem is that we don’t get to observe the potential outcomes <span class="math inline">\(Y(\alpha)\)</span>, but we only get to observe the factual outcomes under the treatment the individual was assigned to. In order to be able to identify the Conditional Average Treatment Effect from the RCT and the observational study we need to make some assumptions.</p>
+<section id="identifiablity-conditions" class="level3">
+<h3 data-anchor-id="identifiablity-conditions">Identifiablity Conditions</h3>
+<p><strong>Assumption 1 (Consistency):</strong> <span class="math inline">\(Y=AY(1)+(1-A)Y(0)\)</span></p>
+<p>Assumption 1 states that the factual outcome is the potential outcome under the actual treatment assigned to the individual.</p>
+<p><strong>Assumption 2 (Randomization):</strong> <span class="math inline">\(Y(0), Y(1) \perp \!\!\! \perp A|S=1,\textbf{X}\)</span></p>
+<p>Assumption 2 is related to the internal validity of the RCT, and implies that the treatment is independent of the potential outcomes given the covariates.</p>
+<p><strong>Assumption 3 (Ingorability on trial participation):</strong> <span class="math inline">\(Y(0),Y(1) \perp \!\!\! \perp S|\textbf{X}\)</span></p>
+<p><strong>Assumption 4 (Mean exchangeability):</strong> <span class="math inline">\(\mathbb{E}[Y(\alpha)| \textbf{X} = \textbf{x}, S=1] = \mathbb{E}[Y(\alpha)|\textbf{X} = \textbf{x}]\)</span>, for all <span class="math inline">\(\textbf{x}\)</span> and <span class="math inline">\(\alpha=0,1\)</span>.</p>
+<p><strong>Assumption 5 (Sample ignorability for treatment effects):</strong> <span class="math inline">\(Y(1)-Y(0) \perp \!\!\! \perp S|\textbf{X}\)</span></p>
+<p><strong>Assumption 6 (Transportability of the CATE):</strong> <span class="math inline">\(\tau_0(\textbf{x}) = \tau_1(\textbf{x})\)</span> for all <span class="math inline">\(\textbf{x}\)</span></p>
+<p><strong>Assumption 7 (Positivity of trial participation):</strong> <span class="math inline">\(0&lt;\mathbb{P}(S=1|\textbf{X}=\textbf{x})&lt;1\)</span></p>
+<p><strong>Assumption 8 (Positivity of treatment assignment):</strong> <span class="math inline">\(0&lt;\mathbb{P}(A=1|\textbf{X}=\textbf{x})&lt;1\)</span></p>
+<p>Under those assumptions we can identify the (study specific) CATE using the following formula:</p>
+<p><span class="math display">\[
+\tau_S(\textbf{x}) = \mathbb{E}[Y|\textbf{X} = \textbf{x}, A=1, S=s] - \mathbb{E}[Y|\textbf{X} = \textbf{x}, A=0, S=s]
+\]</span></p>
+</section>
+<section id="hidden-confounding" class="level3">
+<h3 data-anchor-id="hidden-confounding">Hidden Confounding</h3>
+<p>An unobserved/unmeasured variable <span class="math inline">\(U\)</span> - usually found in observational data - that affects both the treatment and the outcome is called “<em>Hidden Confounder</em>”. The presence or absence of hidden confounders cannot be tested in observational data.</p>
+<p>When hidden confounding is present then <span class="math inline">\(Y(0),Y(1) \not\!\perp\!\!\!\perp A|\textbf{X}\)</span> , where <span class="math inline">\(\textbf{X}\)</span> are the observed covariates.</p>
+<p>Under hidden confounding, no matter how large is the sample size, the causal estimate is always going to be biased away from the true value of the causal effect, i.e.</p>
+<p><span class="math display">\[
+\lim_{sample\; size\to\infty} \hat{\tau}(x) \neq \tau(x)
+\]</span></p>
+<p>Also, given the fact that in an RCT there is no hidden confounding due to randomization, but in observational data there usually is (as we can not measure all possible confounders), the following holds:</p>
+<p><span class="math display">\[
+\hat{\tau}_0(\textbf{x}) \neq \hat{\tau}_1(\textbf{x})
+\]</span></p>
+<p>A possible remedy for hidden confounding can be found in unconfounded studies, such as RCTs, which can be used to remove the confounding bias from the observational data.</p>
+</section>
+<section id="directed-acyclic-graph" class="level3">
+<h3 data-anchor-id="directed-acyclic-graph">Directed Acyclic Graph</h3>
+<p>The DAG describing the problem of combining two different sources of data (a RCT and an observational study) is the following.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/DAG1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>Conditioning on the study we get the following two directed acyclic graphs, one for the RCT and one for the observational study.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/DAG2.png" class="img-fluid figure-img" width="450"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/DAG3.png" class="img-fluid figure-img" width="450"></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="intrinsic-coregionalization-model" class="level2">
+<h2 data-anchor-id="intrinsic-coregionalization-model">Intrinsic Coregionalization Model</h2>
+<section id="introduction" class="level3">
+<h3 data-anchor-id="introduction">Introduction</h3>
+<p>Formally, the classical supervised learning problem requires estimating the output for any given input <span class="math inline">\(\textbf{x}_*\)</span>; an estimator <span class="math inline">\(f_*(\textbf{x}_*)\)</span> is built on the basis of a training set consisting of <span class="math inline">\(N\)</span> input-output pairs <span class="math inline">\(S=\left(\textbf{X}, \textbf{Y}\right) = \{(\textbf{x}_1,y_1),\cdots,(\textbf{x}_N,y_N)\}\)</span>. The input space <span class="math inline">\(\mathcal{X}\)</span> is usually a space of vectors, while the output space is a space of scalars. In multiple output learning (MOL) the output space is a space of vectors as well; the estimator is now a vector valued function <span class="math inline">\(\textbf{f}\)</span>. Indeed, this situation can also be described as the problem of solving <span class="math inline">\(D\)</span> distinct classical supervised learning problems, where each problem is described by one of the components <span class="math inline">\(f_1,\cdots,f_D\)</span> of <span class="math inline">\(\textbf{f}\)</span>. The key idea is to work under the assumption that the problems are in some way related. The goal is then to exploit the relationship among the problems to improve upon solving each problem separately.</p>
+</section>
+<section id="gaussian-processes-for-vector-valued-functions" class="level3">
+<h3 data-anchor-id="gaussian-processes-for-vector-valued-functions">Gaussian Processes for Vector Valued Functions</h3>
+<p>In the vector valued case, the random variables are associated to different processes <span class="math inline">\(\{f_d\}_{d=1}^D\)</span> evaluated at different values of <span class="math inline">\(\textbf{x}\)</span>.</p>
+<p>The vector-valued function <span class="math inline">\(\textbf{f}\)</span> is assumed to follow a Gaussian Process:</p>
+<p><span class="math display">\[
+\begin{equation}
+\textbf{f} \sim \mathcal{GP}\left(\textbf{m},\textbf{K}\right)
+\end{equation}
+\]</span></p>
+<p>where <span class="math inline">\(\textbf{m}\in \mathbb{R}^D\)</span> is a vector the components of which are the mean functions <span class="math inline">\(\{m_d(\textbf{x})\}_{d=1}^D\)</span> of each components and <span class="math inline">\(\textbf{K}\)</span> is a positive matrix valued function with dimension <span class="math inline">\(ND \times ND\)</span> and with entries <span class="math inline">\(\left(\textbf{K}(\textbf{x}_i, \textbf{x}j) \right){d,d'}\)</span> dor <span class="math inline">\(i,j=1,\cdots,N\)</span> and for <span class="math inline">\(d,d'=1,\cdots,D\)</span>. More explicitly,</p>
+<p><span class="math display">\[
+\textbf{K}(\textbf{X},\textbf{X})=
+\begin{bmatrix}
+\left(\textbf{K}(\textbf{X}_1, \textbf{X}_1) \right)_{1,1} &amp; \cdots &amp; \left(\textbf{K}(\textbf{X}_1, \textbf{X}_D) \right)_{1,D} \\
+\vdots &amp; \cdots &amp;\vdots \\
+\left(\textbf{K}(\textbf{X}_D, \textbf{X}_1) \right)_{D,1}
+&amp; \cdots &amp; \left(\textbf{K}(\textbf{X}_D, \textbf{X}_D) \right)_{D,D}
+\end{bmatrix}
+\]</span></p>
+<p>The entries <span class="math inline">\(\left(\textbf{K}(\textbf{x}, \textbf{x}') \right)_{d,d'}\)</span> in the matrix <span class="math inline">\(\textbf{K}(\textbf{x}, \textbf{x}')\)</span> correspond to the covariances between the outputs <span class="math inline">\(f_d(\textbf{x})\)</span> and <span class="math inline">\(f_{d'}(\textbf{x}')\)</span> and express the degree of correlation or similarity between them.</p>
+<p>For a set of inputs <span class="math inline">\(\textbf{X}\)</span>, the prior distribution over the vector <span class="math inline">\(\textbf{f}(\textbf{X})\)</span> is given by</p>
+<p><span class="math display">\[
+\begin{equation}
+\textbf{f}(\textbf{X}) \sim \mathcal{N}\left(\textbf{m}(\textbf{X}), \textbf{K}(\textbf{X}, \textbf{X})\right)
+\end{equation}
+\]</span></p>
+<p>where <span class="math inline">\(\textbf{m}(\textbf{X})\)</span> is a vector that concentrates the mean vectors associated to the outputs and the covariance matrix <span class="math inline">\(\textbf{K}(\textbf{X}, \textbf{X})\)</span> is the one described in above.</p>
+<p>In a regression context, the likelihood function for the outputs is often taken to be Gaussian distribution, so that</p>
+<p><span class="math display">\[
+p(\textbf{y}|\textbf{f}, \textbf{x}, \Sigma) = \mathcal{N}(\textbf{f}(\textbf{x}), \Sigma)
+\]</span></p>
+<p>where <span class="math inline">\(\Sigma \in \mathbb{R}^{D\times D}\)</span> is a diagonal matrix with elements <span class="math inline">\(\{\sigma_d^2\}_{d=1}^D\)</span>.</p>
+<p>For a Gaussian likelihood, the predictive distribution and the marginal likelihood can be derived analytically. The predictive distribution for a new vector <span class="math inline">\(\textbf{x}_*\)</span> is</p>
+<p><span class="math display">\[
+p\left(\textbf{f}(\textbf{x}_*)|\textbf{S},\textbf{f}, \textbf{x}, \phi\right) = \mathcal{N}\left(\textbf{f}_*(\textbf{x}_*), \textbf{K}(\textbf{x}_*, \textbf{x}_*) \right)
+\]</span></p>
+<p>with</p>
+<p><span class="math display">\[
+\textbf{f}_*(\textbf{x}_*) = \textbf{K}_{\textbf{x}_*}^\top \left(\textbf{K}(\textbf{X},\textbf{X})+\boldsymbol{\Sigma}\right)^{-1}\bar{\textbf{y}}
+\]</span></p>
+<p><span class="math display">\[
+\textbf{K}_*(\textbf{x}_*,\textbf{x}_*) = \textbf{K}(\textbf{x}_*,\textbf{x}_*) - \textbf{K}_{\textbf{x}_*}\left(\textbf{K}(\textbf{X},\textbf{X})+\boldsymbol{\Sigma}\right)^{-1}\textbf{K}_{\textbf{x}_*}^\top
+\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{\Sigma} = \Sigma\otimes \textbf{I}_N\)</span>, <span class="math inline">\(\textbf{K}_{\textbf{x}_*} \in \mathbb{R}^{D\times D}\)</span> has entries <span class="math inline">\((\textbf{K}(\textbf{x}_*, \textbf{x}_j))_{d,d'}\)</span> for <span class="math inline">\(j=1,\cdots,N\)</span> and <span class="math inline">\(d,d' = 1,\cdots,D\)</span> and <span class="math inline">\(\phi\)</span> denotes a possible set of hyperparameters of the covariance function <span class="math inline">\(\textbf{K}(\textbf{x},\textbf{x}')\)</span> used to compute <span class="math inline">\(\textbf{K}(\textbf{X}, \textbf{X})\)</span> and the variance of the noise of each output <span class="math inline">\(\{\sigma_d^2\}_{d=1}^D\)</span>.</p>
+</section>
+<section id="separable-kernels-and-sum-of-separable-kernels" class="level3">
+<h3 data-anchor-id="separable-kernels-and-sum-of-separable-kernels">Separable Kernels and Sum of Separable Kernels</h3>
+<p>Multi-output class of kernel functions that are formulated as a sum of products between a kernel function for the input space alone and a kernel function that encodes the interactions among the outputs are called separable kernels and sum of separable kernels.</p>
+<p>We consider the class of kernels of the form</p>
+<p><span class="math display">\[\left(\textbf{K}(\textbf{x},\textbf{x}')\right)_{d,d'} = k(\textbf{x},\textbf{x}')k_T(d,d')\]</span> where <span class="math inline">\(k\)</span>,<span class="math inline">\(k_T\)</span> are scalar kernels on <span class="math inline">\(\mathcal{X}\times \mathcal{X}\)</span> and <span class="math inline">\(\{1,\cdots,D\} \times \{1,\cdots,D\}\)</span>.</p>
+<p>Equivalently, one can consider the matrix expression</p>
+<p><span class="math display">\[
+\textbf{K}(\textbf{x},\textbf{x}')=k(\textbf{x},\textbf{x}')\textbf{B}
+\]</span></p>
+<p>where <span class="math inline">\(\textbf{B}\)</span> is a <span class="math inline">\(D\times D\)</span> symmetric and positive semi-definite matrix. We call this class of kernels separable since the contribution of input and output is decoupled.</p>
+<p>In the same spirit a more general class of kernels is given by</p>
+<p><span class="math display">\[
+\textbf{K}(\textbf{x},\textbf{x}') = \sum_{q=1}^Q k_q(\textbf{x},\textbf{x}')\textbf{B}_q
+\]</span></p>
+<p>For this class of kernels, the kernel matrix associated to a data set <span class="math inline">\(\textbf{X}\)</span> has a simpler form and can be written as</p>
+<p><span class="math display">\[
+\textbf{K}(\textbf{X},\textbf{X}) = \sum_{q=1}^Q \textbf{B}_q \otimes k_q(\textbf{X},\textbf{X})
+\]</span></p>
+<p>where <span class="math inline">\(\otimes\)</span> represent the Kronecker product between matrices. We call this class of kernels sum of separable kernels.</p>
+</section>
+<section id="rank-2-icm" class="level3">
+<h3 data-anchor-id="rank-2-icm">Rank-2 ICM</h3>
+<p>We want to combine these two data sets to obtain an unbiased estimate of the CATE on the observational study.</p>
+<p>In order to estimate the study specific CATEs we need to estimate four different quantities:</p>
+<p><span class="math display">\[
+\mathbb{E}[Y|X=x, T=0, S=0]
+\]</span></p>
+<p><span class="math display">\[
+\mathbb{E}[Y|X=x, T=1, S=0]
+\]</span></p>
+<p><span class="math display">\[
+\mathbb{E}[Y|X=x, T=0, S=1]
+\]</span></p>
+<p><span class="math display">\[
+\mathbb{E}[Y|X=x, T=1, S=1]
+\]</span></p>
+<p>In the ICM, the outputs are expressed as linear combinations of independent random functions and in our particular case as the weighted sum of two latent functions, described with the same kernel.</p>
+<p>We assume that each output is associated with a potential outcome and we construct the model in the following way:</p>
+<ol type="1">
+<li><p>We sample from a GP <span class="math inline">\(u(\textbf{x})\sim\left(\textbf{0}, k(\textbf{x},\textbf{x}')\right)\)</span> twice to obtain <span class="math inline">\(u^1(\textbf{x})\)</span> and <span class="math inline">\(u^2(\textbf{x})\)</span>.</p></li>
+<li><p>We obtain <span class="math inline">\(f_0^{RCT}(\textbf{x})\)</span>, <span class="math inline">\(f_1^{RCT}(\textbf{x})\)</span>, <span class="math inline">\(f_0^{obs}(\textbf{x})\)</span> and <span class="math inline">\(f_1^{obs}(\textbf{x})\)</span> by linearly transforming <span class="math inline">\(u^1(\textbf{x})\)</span> and <span class="math inline">\(u^2(\textbf{x})\)</span> as following:</p>
+<p><span class="math display">\[
+f_0^{RCT}(\textbf{x}) = \alpha_1^1u^1(\textbf{x})+\alpha_1^2u^2(\textbf{x})
+\]</span></p>
+<p><span class="math display">\[
+f_1^{RCT}(\textbf{x}) = \alpha_2^1u^1(\textbf{x})+\alpha_2^2u^2(\textbf{x})
+\]</span></p></li>
+</ol>
+<p><span class="math display">\[
+f_0^{obs}(\textbf{x}) = \alpha_3^1u^1(\textbf{x})+\alpha_3^2u^2(\textbf{x})
+\]</span></p>
+<p><span class="math display">\[
+f_1^{obs}(\textbf{x}) = \alpha_4^1u^1(\textbf{x})+\alpha_4^2u^2(\textbf{x})
+\]</span></p>
+<p>where <span class="math inline">\(u^1\)</span> and <span class="math inline">\(u^2\)</span> are independent.</p>
+<p>For a fixed value of <span class="math inline">\(\textbf{x}\)</span> we can group <span class="math inline">\(f_0^{RCT}(\textbf{x})\)</span>, <span class="math inline">\(f_1^{RCT}(\textbf{x})\)</span>, <span class="math inline">\(f_0^{obs}(\textbf{x})\)</span> and <span class="math inline">\(f_1^{obs}(\textbf{x})\)</span> in a vector <span class="math inline">\(\textbf{f}(\textbf{x})\)</span></p>
+<p><span class="math display">\[
+\textbf{f}(\textbf{x}) =
+\begin{bmatrix}
+f_0^{RCT}(\textbf{x})\\
+f_1^{RCT}(\textbf{x})\\
+f_0^{obs}(\textbf{x})\\
+f_1^{obs}(\textbf{x})
+\end{bmatrix}
+\]</span></p>
+<p>The covariance for <span class="math inline">\(\textbf{f}(\textbf{x})\)</span> is given in terms of the covariance functions for <span class="math inline">\(u_q^i(\textbf{x})\)</span>, <span class="math inline">\(i=1,2\)</span> and <span class="math inline">\(q=1,2,3,4\)</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+(\alpha_1^1)^2+(\alpha_1^2)^2 &amp; \alpha_1^1\alpha_2^1+\alpha_1^2\alpha_2^2 &amp; \alpha_1^1\alpha_3^1+\alpha_1^2\alpha_3^2 &amp; \alpha_1^1\alpha_4^1+\alpha_1^2\alpha_4^2\\
+\alpha_2^1\alpha_1^1+\alpha_2^2\alpha_1^2 &amp; (\alpha_2^1)^2+(\alpha_2^2)^2 &amp; \alpha_2^1\alpha_3^1+\alpha_2^2\alpha_3^2 &amp; \alpha_2^1\alpha_4^1+\alpha_2^2\alpha_4^2 \\
+\alpha_3^1\alpha_1^1+\alpha_3^2\alpha_1^2 &amp; \alpha_3^1\alpha_2^1+\alpha_3^2\alpha_2^2 &amp; (\alpha_3^1)^2+(\alpha_3^2)^2 &amp; \alpha_3^1\alpha_4^1+\alpha_3^2\alpha_4^2 \\
+\alpha_4^1\alpha_1^1+\alpha_4^2\alpha_1^2 &amp; \alpha_4^1\alpha_2^1+\alpha_4^2\alpha_2^2 &amp; \alpha_4^1\alpha_3^1+\alpha_4^2\alpha_3^2 &amp; (\alpha_4^1)^2+(\alpha_4^2)^2
+\end{bmatrix}\otimes k(\textbf{x},\textbf{x}') = \textbf{B}\otimes k(\textbf{x},\textbf{x}')
+\]</span></p>
+<p>The rank of the matrix <span class="math inline">\(\textbf{B}\)</span> is equal to the number of independent latent functions we use to describe the outcomes, i.e.&nbsp;equal to 2.</p>
+<p>Following this parameterisation, we can obtain the CATE of each dataset by simply taking their difference of the potential outcomes, i.e.</p>
+<p><span class="math display">\[
+\tau_{RCT}(\textbf{x}) = f_1^{RCT}(\textbf{x}) - f_0^{RCT}(\textbf{x})
+\]</span></p>
+<p><span class="math display">\[
+\tau_{obs}(\textbf{x}) = f_1^{obs}(\textbf{x}) - f_0^{obs}(\textbf{x})
+\]</span></p>
+<p>A graphical representation of the rank-2 ICM method is showed bellow:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/MultiOutputGPs.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="uncertainty" class="level3">
+<h3 data-anchor-id="uncertainty">Uncertainty</h3>
+<p>Apart from estimation the Conditional Average Treatment Effect, we also need to to estimate the uncertainty of our prediction.</p>
+<p>For a set of inputs <span class="math inline">\(\textbf{X}\)</span>, the prior distribution over the vector <span class="math inline">\(\textbf{f}(\textbf{X})\)</span> is given by:</p>
+<p><span class="math display">\[
+\textbf{f} =
+\begin{bmatrix}
+f_0^{RCT}(\textbf{X}^1)\\
+f_1^{RCT}(\textbf{X}^2)\\
+f_0^{obs}(\textbf{X}^3)\\
+f_1^{obs}(\textbf{X}^4)
+\end{bmatrix} \sim
+\mathcal{N}
+\left(
+m=\begin{bmatrix}
+m_1(\textbf{X}^1)\\
+m_2(\textbf{X}^2)\\
+m_3(\textbf{X}^3)\\
+m_1(\textbf{X}^4)
+\end{bmatrix},
+K=\begin{bmatrix}
+K^{11} &amp; K^{12} &amp; K^{13} &amp; K^{14}\\
+K^{21} &amp; K^{22} &amp; K^{23} &amp; K^{24}\\
+K^{31} &amp; K^{32} &amp; K^{33} &amp; K^{34}\\
+K^{41} &amp; K^{42} &amp; K^{43} &amp; K^{44}
+\end{bmatrix}
+\right)
+\]</span></p>
+<p>where <span class="math inline">\(K^{ij} = b_{ij}k(X^i,X^j)\)</span>, <span class="math inline">\(i,j=1,2,3,4\)</span> and <span class="math inline">\(k(\cdot,\cdot)\)</span> the kernel of the ICM model.</p>
+<p>We have that <span class="math inline">\(K \in \mathbb{R}^{(N_1+N_2+N_3+N_4)\times (N_1+N_2+N_3+N_4)}\)</span>.</p>
+<p>The covariance matrix of the prediction is given by the following expression:</p>
+<p><span class="math display">\[
+V=K_{**}-K_*^\top(K+\Sigma)^{-1}K_*
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+K_*=\begin{bmatrix}
+K^{11}_* &amp; K^{12}_* &amp; K^{13}_* &amp; K^{14}_*\\
+K^{21}_* &amp; K^{22}_* &amp; K^{23}_* &amp; K^{24}_*\\
+K^{31}_* &amp; K^{32}_* &amp; K^{33}_* &amp; K^{34}_*\\
+K^{41}_* &amp; K^{42}_* &amp; K^{43}_* &amp; K^{44}_*
+\end{bmatrix}
+\]</span></p>
+<p>with <span class="math inline">\(K^{ij}_* = b_{ij}k(X^i,X^*)\)</span>, <span class="math inline">\(K_* \in \mathbb{R}^{(N_1+N_2+N_3+N_4)\times(4N_*)}\)</span>.</p>
+<p><span class="math display">\[
+K_{**}=\begin{bmatrix}
+K^{11}_{**} &amp; K^{12}_{**} &amp; K^{13}_{**} &amp; K^{14}_{**}\\
+K^{21}_{**} &amp; K^{22}_{**} &amp; K^{23}_{**} &amp; K^{24}_{**}\\
+K^{31}_{**} &amp; K^{32}_{**} &amp; K^{33}_{**} &amp; K^{34}_{**}\\
+K^{41}_{**} &amp; K^{42}_{**} &amp; K^{43}_{**} &amp; K^{44}_{**}
+\end{bmatrix}
+\]</span></p>
+<p>with <span class="math inline">\(K_{**}^{ij} = b_{ij}K(X^*,X^*)\)</span> , <span class="math inline">\(K_{**} \in \mathbb{R}^{(4N_*)\times(4N_*)}\)</span></p>
+<p>and <span class="math inline">\(\Sigma \in \mathbb{R}^{(N_1+N_2+N_3+N_4) \times (N_1+N_2+N_3+N_4)}\)</span> a noise matrix.</p>
+<p>As a result, <span class="math inline">\(V\)</span> is going to take the following form:</p>
+<p><span class="math display">\[
+V=\begin{bmatrix}
+V^{11} &amp; V^{12} &amp; V^{13} &amp; V^{14}\\
+V^{21} &amp; V^{22} &amp; V^{23} &amp; V^{24}\\
+V^{31} &amp; V^{32} &amp; V^{33} &amp; V^{34}\\
+V^{41} &amp; V^{42} &amp; V^{43} &amp; V^{44}
+\end{bmatrix}\in \mathbb{R}^{(4N_*)\times (4N_*)}
+\]</span></p>
+<p>Let’s say for example we want to estimate the uncertainty/variance of the CATE that was obtained through the RCT sample:</p>
+<p><span class="math display">\[
+\tau_1(\textbf{X}^*) = f_1^{RCT}(\textbf{X}^*)-f_0^{RCT}(\textbf{X}^*)
+\]</span></p>
+<p>These two quantities to the following matrix:</p>
+<p><span class="math display">\[
+V_{\tau_1} =
+\begin{bmatrix}
+V^{11} &amp; V^{12} \\
+V^{21} &amp; V^{22}
+\end{bmatrix}
+\]</span></p>
+<p>where <span class="math inline">\(V^{12}=V^{21}\)</span> represents the cross-covariance between the different outcomes.</p>
+<p>So, the covariance matrix of the difference, i.e.&nbsp;the quantity <span class="math inline">\(\tau_1\)</span> is given by:</p>
+<p><span class="math display">\[
+var(\tau_1) = V^{22}+V^{11}-2V^{12} \in \mathbb{R}^{N_* \times N_*}
+\]</span></p>
+<p>where the diagonal elements of this matrix are the variances of the quantity <span class="math inline">\(\tau_1\)</span>.</p>
+</section>
+</section>
+<section id="simulation-study" class="level2">
+<h2 data-anchor-id="simulation-study">Simulation Study</h2>
+<p>Data Generating Process</p>
+<p>For both datasets the treatment is generated as: <span class="math inline">\(T \sim Bernoulli(0.5)\)</span>. In the RCT the observed covariate <span class="math inline">\(X\)</span> is generated as <span class="math inline">\(X_{S=1} \sim Uniform[-1,1]\)</span> and the unobserved confounder as <span class="math inline">\(U_{S=1}\sim \mathcal{N}(0,1)\)</span>.</p>
+<p>In the observational study the covariate <span class="math inline">\(X\)</span> and the hidden confounder <span class="math inline">\(U\)</span> are observed as:</p>
+<p><span class="math display">\[
+\left(X_{S=0},U_{S=0}\right)|T_{S=0} \sim \mathcal{N}\left([0,0],       \begin{bmatrix}      1 &amp; T_{S=0}-0.5\\      T_{S=0}-0.5 &amp; 1      \end{bmatrix}      \right)
+\]</span>For both datasets the outcome is generated as <span class="math inline">\(Y=1+T+X+2\cdot T\cdot X +0.5X^2 +0.75\cdot T \cdot X^2 +U +0.5\epsilon\)</span>.</p>
+<p>The Potential Outcomes are</p>
+<p><span class="math display">\[
+Y_0(X) = 1+X+0.50X^2
+\]</span></p>
+<p><span class="math display">\[Y_1(X) = 2+3X+1.25X^2\]</span> and the CATE is</p>
+<p><span class="math display">\[
+\tau(X) = 1+2X+0.75X^2
+\]</span></p>
+<p>The data and the true functional form of the CATE are depisted on the figure:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/data.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>In order to estimate the CATE we trained a rank 2 ICM where each potential outcome is considered an output for the model. We also estimated the the CATE using a technique proposed by Kallus et al (2018) where the RCT is used to deconfound the CAATE estimated on the observational study. This “deconfoundig”is done using a bias/confounding function, which is a function trying to capture the bias introduced on the observational data by the hidden confounders. This function has the form:</p>
+<p><span class="math display">\[
+\eta(\textbf{x}) = \tau_{RCT}(\textbf{x}) - \tau_{obs}(\textbf{x})
+\]</span></p>
+<p>and can be well approximated by a function with low complexity (e.g.&nbsp;linear).</p>
+<p>The results of the different approaches are depicted on the following figure:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/CATE estimates.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>To compare the different models, we computed the Mean Square Error:</p>
+<table class="table">
+<colgroup>
+<col style="width: 63%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">MSE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math display">\[                              
+    \hat{\tau}_{Kallus}           
+    \]</span></td>
+<td style="text-align: center;">0.569751423740531</td>
+</tr>
+<tr class="even">
+<td><span class="math display">\[                              
+    \hat{\tau}_{obs}^{ICM}        
+    \]</span></td>
+<td style="text-align: center;">1.175507693180824</td>
+</tr>
+<tr class="odd">
+<td><span class="math display">\[                              
+    \hat{\tau}_{RCT}^{ICM}        
+    \]</span></td>
+<td style="text-align: center;">0.157628030012711</td>
+</tr>
+</tbody>
+</table>
+<p>We notice that the CATE estimation obtained by the RCT part of the coregionalization model performs better than both the observational part of the ICM model and the method proposed by Kallus et al.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 data-anchor-id="conclusion">Conclusion</h2>
+<ul>
+<li><p>Multi-output GPs are proven to be effective in estimating heterogeneous treatment effects when combining observational and experimental studies.</p></li>
+<li><p>The ICM does not require full covariate overlap between the different studies.</p></li>
+<li><p>The CATE estimate using the ICM experimental part yielded the lowest MSE, over-performing state of the art methods.</p></li>
+</ul>
+</section>
+<section id="discussionfuture-work" class="level2">
+<h2 data-anchor-id="discussionfuture-work">Discussion/Future Work</h2>
+<p>The credible intervals obtained by the ICM are very narrow, proving that the ICM is over-confident when predicting the CATE.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/CI2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/CIzoom.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>Moreover, the model treats the different sources of data as equal, i.e.&nbsp;datapoints from the RCT are considered exactly equivalent as datapoint coming from the observational study. However, it would be worth it to investigate the result of the estimation if we would assign different weight to individuals coming from different studies.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/weight.png" class="img-fluid figure-img" width="406"></p>
+</figure>
+</div>
+<p>Last, the ICM trained to estimate the CATE in the simulation study was defined using the RBF kernel for the independent latent functions. However, we should investigate if the choice of another kernel would yield better results.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/kernels.png" class="img-fluid figure-img" width="304"></p>
+</figure>
+</div>
+</section>
+<section id="section" class="level2">
+<h2 data-anchor-id="section"></h2>
+<p><span class="citation" data-cites="kallus2018 alvarez alaa2017">(<a href="#ref-kallus2018" role="doc-biblioref">Kallus, Puli, and Shalit 2018</a>; <a href="#ref-alvarez" role="doc-biblioref">Alvarez, Rosasco, and Lawrence, n.d.</a>; <a href="#ref-alaa2017" role="doc-biblioref">Alaa and Schaar 2017</a>)</span></p>
+
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-alaa2017" class="csl-entry" role="doc-biblioentry">
+Alaa, Ahmed M., and Mihaela van der Schaar. 2017. <span>“Bayesian Inference of Individualized Treatment Effects Using Multi-Task Gaussian Processes.”</span> In. Vol. 30. Curran Associates, Inc. <a href="https://proceedings.neurips.cc/paper/2017/hash/6a508a60aa3bf9510ea6acb021c94b48-Abstract.html">https://proceedings.neurips.cc/paper/2017/hash/6a508a60aa3bf9510ea6acb021c94b48-Abstract.html</a>.
+</div>
+<div id="ref-alvarez" class="csl-entry" role="doc-biblioentry">
+Alvarez, Mauricio A., Lorenzo Rosasco, and Neil D. Lawrence. n.d. <span>“Kernels for Vector-Valued Functions: A Review.”</span> <a href="https://doi.org/10.48550/arXiv.1106.6251">https://doi.org/10.48550/arXiv.1106.6251</a>.
+</div>
+<div id="ref-kallus2018" class="csl-entry" role="doc-biblioentry">
+Kallus, Nathan, Aahlad Manas Puli, and Uri Shalit. 2018. <span>“Removing Hidden Confounding by Experimental Grounding.”</span> In. Vol. 31. Curran Associates, Inc. <a href="https://papers.nips.cc/paper/2018/hash/566f0ea4f6c2e947f36795c8f58ba901-Abstract.html">https://papers.nips.cc/paper/2018/hash/566f0ea4f6c2e947f36795c8f58ba901-Abstract.html</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

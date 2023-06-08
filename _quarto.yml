@@ -1,0 +1,14 @@
+# This file controls the settings for your Quarto template from www.marvinschmitt.com
+
+# website settings
+website:
+  title: "Generalizing Heterogeneous Treatment Effects to Target Populations with Gaussian Processes"                                # Your name
+  
+
+
+
+
+project:
+  type: website
+  output-dir: docs
+

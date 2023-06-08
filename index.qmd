@@ -25,6 +25,8 @@ bibliography: references.bib
 ::: {#about-block}
 :::
 
+Email: [evangelos.dimitriou.22\@ucl.ac.uk](evangelos.dimitriou.22@ucl.ac.uk)
+
 ## Abstract
 
 Randomised control trials (RCT) are widely considered the gold standard for making causal predictions and assessing treatment effects, due to their high internal validity that comes with randomisation. However, the strict eligibility criteria often lead to small samples not representative of the target population and as a result to lack of external validity. In contrast, observational studies, which often have larger sample sizes, are representative of the target population, but lack internal validity due to confounding leading to biased results. Most of the methods for combining observational and experimental studies and estimating causal effects come from the frequentist framework - such as weighting, outcome modelling or doubly robust estimators - although some work has been done recently in the Bayesian context. To obtain unbiased estimates of heterogeneous treatment effects for the target population represented by the observational study, we propose a Bayesian non-parametric approach based on Gaussian Processes, where the RCT data are used to correct the confounding effect on the observational data. Our method does not require full covariate overlap between the RCT and the observational samples and yields a quantification of the uncertainty. We demonstrate our method's performance through a simulation study.
@@ -466,17 +468,17 @@ The results of the different approaches are depicted on the following figure:
 
 To compare the different models, we computed the Mean Square Error:
 
-|                                             |        MSE        |
-|---------------------------------------------|:-----------------:|
-| $$                                          
-        \hat{\tau}_{Kallus}                   
-        $$                                    | 0.569751423740531 |
-| $$                                          
-        \hat{\tau}_{obs}^{ICM}                
-        $$                                    | 1.175507693180824 |
-| $$                                          
-        \hat{\tau}_{RCT}^{ICM}                
-        $$                                    | 0.157628030012711 |
+|                                                |        MSE        |
+|------------------------------------------------|:-----------------:|
+| $$                                             
+         \hat{\tau}_{Kallus}                     
+         $$                                      | 0.569751423740531 |
+| $$                                             
+         \hat{\tau}_{obs}^{ICM}                  
+         $$                                      | 1.175507693180824 |
+| $$                                             
+         \hat{\tau}_{RCT}^{ICM}                  
+         $$                                      | 0.157628030012711 |
 
 We notice that the CATE estimation obtained by the RCT part of the coregionalization model performs better than both the observational part of the ICM model and the method proposed by Kallus et al.
 

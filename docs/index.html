@@ -153,6 +153,7 @@ div.csl-indent {
 </div>  
 </div>
 
+<p>Email: <a href="evangelos.dimitriou.22@ucl.ac.uk">evangelos.dimitriou.22@ucl.ac.uk</a></p>
 <section id="abstract" class="level2">
 <h2 data-anchor-id="abstract">Abstract</h2>
 <p>Randomised control trials (RCT) are widely considered the gold standard for making causal predictions and assessing treatment effects, due to their high internal validity that comes with randomisation. However, the strict eligibility criteria often lead to small samples not representative of the target population and as a result to lack of external validity. In contrast, observational studies, which often have larger sample sizes, are representative of the target population, but lack internal validity due to confounding leading to biased results. Most of the methods for combining observational and experimental studies and estimating causal effects come from the frequentist framework - such as weighting, outcome modelling or doubly robust estimators - although some work has been done recently in the Bayesian context. To obtain unbiased estimates of heterogeneous treatment effects for the target population represented by the observational study, we propose a Bayesian non-parametric approach based on Gaussian Processes, where the RCT data are used to correct the confounding effect on the observational data. Our method does not require full covariate overlap between the RCT and the observational samples and yields a quantification of the uncertainty. We demonstrate our method’s performance through a simulation study.</p>
@@ -504,8 +505,8 @@ Y_0(X) = 1+X+0.50X^2
 <p>To compare the different models, we computed the Mean Square Error:</p>
 <table class="table">
 <colgroup>
-<col style="width: 70%">
-<col style="width: 29%">
+<col style="width: 71%">
+<col style="width: 28%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -515,21 +516,21 @@ Y_0(X) = 1+X+0.50X^2
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="math display">\[                                          
-        \hat{\tau}_{Kallus}                   
-        \]</span></td>
+<td><span class="math display">\[                                             
+         \hat{\tau}_{Kallus}                     
+         \]</span></td>
 <td style="text-align: center;">0.569751423740531</td>
 </tr>
 <tr class="even">
-<td><span class="math display">\[                                          
-        \hat{\tau}_{obs}^{ICM}                
-        \]</span></td>
+<td><span class="math display">\[                                             
+         \hat{\tau}_{obs}^{ICM}                  
+         \]</span></td>
 <td style="text-align: center;">1.175507693180824</td>
 </tr>
 <tr class="odd">
-<td><span class="math display">\[                                          
-        \hat{\tau}_{RCT}^{ICM}                
-        \]</span></td>
+<td><span class="math display">\[                                             
+         \hat{\tau}_{RCT}^{ICM}                  
+         \]</span></td>
 <td style="text-align: center;">0.157628030012711</td>
 </tr>
 </tbody>
